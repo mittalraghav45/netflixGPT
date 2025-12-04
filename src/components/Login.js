@@ -1,5 +1,12 @@
 import Header from "./Header";
+import { useState } from "react";
+
 const Login = () => {
+  const [isSignInForm, setIsSignInForm] = useState(true);
+
+  const toggelSignInForm = () => {
+    setIsSignInForm(!isSignInForm);
+  };
   return (
     <div>
       <Header />
@@ -12,15 +19,39 @@ const Login = () => {
         }}
       ></div>
 
-      <form className="w-1/2 p-12 m-36 bg-black absolute mx-auto right-0 left-0 text-white ">
-        <h1 className="font-bold text-3xl py-5">Sign In</h1>
-        <input type="text" placeholder="Email" className="py-2 m-2 w-full" />
+      <form className="w-1/4 p-12 m-36 bg-black/80 absolute mx-auto right-0 left-0 text-white rounded-lg">
+        <h1 className="font-bold text-3xl py-5">
+          {isSignInForm ? "Sign In" : "Sign Up"}
+        </h1>
+
+        {!isSignInForm && (
+          <input
+            type="text"
+            placeholder="Full Name"
+            className="py-2 px-2 m-2 w-full bg-gray-700 rounded-lg"
+          />
+        )}
+
+        <input
+          type="text"
+          placeholder="Enter Email Address"
+          className="py-2 px-2 m-2 w-full bg-gray-700 rounded-lg"
+        />
         <input
           type="password"
-          placeholder="password"
-          className="py-2 m-2 w-full"
+          placeholder="Password"
+          className="py-2 px-2 m-2 w-full bg-gray-700 rounded-lg"
         />
-        <button className="p-4 m-2 bg-red-700 w-full">Sign In</button>
+
+        <button className="p-4 m-2 bg-red-700 w-full rounded-lg">
+          {isSignInForm ? "Sign In" : "Sign Up"}
+        </button>
+
+        <p className="py-4 px-4 cursor-pointer" onClick={toggelSignInForm}>
+          {isSignInForm
+            ? "New to Netflix? Sign Up"
+            : "Already Registered? Sign In Now"}
+        </p>
       </form>
     </div>
   );
