@@ -1,6 +1,12 @@
 import Header from "./Header";
 import { useState, useRef } from "react";
 import checkValidData from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -9,21 +15,64 @@ const Login = () => {
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const navigate = useNavigate();
 
   const toggelSignInForm = () => {
     setIsSignInForm(!isSignInForm);
   };
 
-const handleButtonClick = () => {
-  const nameValue = isSignInForm ? "" : name.current.value;
-  const message = checkValidData(
-    nameValue,
-    email.current.value,
-    password.current.value
-  );
-  setErrorMessage(message);
-};
+  const handleButtonClick = () => {
+    const nameValue = isSignInForm ? "" : name.current.value;
+    const message = checkValidData(
+      nameValue,
+      email.current.value,
+      password.current.value
+    );
+    setErrorMessage(message);
 
+    if (message) {
+      return;
+    }
+
+    // sign up
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log('createUserWithEmailAndPassword ',+user);
+          navigate("/");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+          setErrorMessage(errorCode + " " + errorMessage);
+        });
+    } else {
+      //sign in logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log('signInWithEmailAndPassword ', +user); 
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + " " + errorMessage);
+        });
+    }
+  };
 
   return (
     <div>
@@ -46,7 +95,7 @@ const handleButtonClick = () => {
 
         {!isSignInForm && (
           <input
-          ref={name}
+            ref={name}
             type="text"
             placeholder="Full Name"
             className="py-2 px-2 m-2 w-full bg-gray-700 rounded-lg"
@@ -66,7 +115,7 @@ const handleButtonClick = () => {
           className="py-2 px-2 m-2 w-full bg-gray-700 rounded-lg"
         />
         <p className="text-red-500 px-2 font-bold ">{errorMessage}</p>
-        
+
         <button
           className="p-4 m-2 bg-red-700 w-full rounded-lg"
           onClick={handleButtonClick}
