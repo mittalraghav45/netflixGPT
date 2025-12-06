@@ -6,6 +6,7 @@ import { auth } from "../utils/firebase";
 import { addUser, removeUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { LOGO, PHOTO_URL } from "../utils/constant";
 
 
 const Header = () => {
@@ -24,14 +25,14 @@ const Header = () => {
   };
 
     useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) { 
         const { uid, email, displayName,photoURL } = user;
         dispatch(addUser({ 
           uid: uid, 
           email: email, 
           displayName: displayName ,
-          photoURL:photoURL}));
+          photoURL:PHOTO_URL}));
           navigate('/browse');
          
       } else { 
@@ -40,12 +41,14 @@ const Header = () => {
 
       }
     });
+    //calls so that the ehader doesnt check user login again and again, , unsubscribe when the componenet unmounts
+    return()=>unsubscribe();
   }, []);
   return (
     <div className="absolute px-8 py-2 bg-gradient-to-b from-black z-10 w-screen flex justify-between">
       <img
         className="w-36"
-        src="https://logo.svgcdn.com/l/netflix.svg "
+        src={LOGO}
         alt="Netflix logo"
       />
      { user && <div className="flex p-2">
