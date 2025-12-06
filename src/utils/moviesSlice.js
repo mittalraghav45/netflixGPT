@@ -5,12 +5,13 @@ name:'movies',
 initialState:{
     nowPlayingMovies:null,
 },
-reducers:{
-    addNowPlayingMovies:(state,action)=>{
-        state.nowPlayingMovies=action.payload
-    }
+reducers: {
+  addNowPlayingMovies: (state, action) => {
+    state.nowPlayingMovies = action.payload; // now an array
+  },
 }
+
 }) 
 
-export default movieSlice.reducer;
 export const {addNowPlayingMovies}=movieSlice.actions;
+export default movieSlice.reducer;
